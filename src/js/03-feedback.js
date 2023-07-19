@@ -19,10 +19,11 @@ function onFormChangeText(event) {
 }
 
 function onFormSubmit(event) {
+    console.log(formData);
     event.preventDefault(); 
-    
     event.currentTarget.reset();
     localStorage.removeItem('STORADGE_KEY');
+
     
 }
 
