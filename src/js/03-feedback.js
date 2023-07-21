@@ -4,7 +4,8 @@ const inputEl = document.querySelector('.feedback-form input');
 const messageEl = document.querySelector('.feedback-form textarea');
 const formEl = document.querySelector('.feedback-form')
 
-const formData = {};    
+
+let formData = {};    
 const STORADGE_KEY = 'feedback-form-state';
 
 formEl.addEventListener('input', throttle(onFormChangeText, 500));
@@ -19,22 +20,28 @@ function onFormChangeText(event) {
 }
 
 function onFormSubmit(event) {
-    console.log(formData);
+    
     event.preventDefault(); 
+    if (inputEl.value === '' || messageEl.value === '') {
+         alert('You must write all fields!!!!');
+       return
+    }
+    console.log(formData);
     event.currentTarget.reset();
     localStorage.removeItem('STORADGE_KEY');
-
+    formData = {};
     
 }
 
 function CheckLocalStoradge() {
     const savedText = JSON.parse(localStorage.getItem('STORADGE_KEY'));
-    console.log(savedText);
     if (savedText) {
-        inputEl.value = savedText.email;
-        messageEl.value = savedText.message;
+        inputEl.value = savedText.email || "";
+        messageEl.value = savedText.message || "";
     }
     
 
     
 }
+
+
