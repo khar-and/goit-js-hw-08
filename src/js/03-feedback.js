@@ -1,47 +1,37 @@
 import throttle from "lodash.throttle";
 
-const inputEl = document.querySelector('.feedback-form input');
-const messageEl = document.querySelector('.feedback-form textarea');
-const formEl = document.querySelector('.feedback-form')
+const LOCAL_KEY = 'feedback-form-state';
 
-const formData = {
-  email: '',
-  message: '',
-};
-// let formData = {};    
-const STORADGE_KEY = 'feedback-form-state';
+form = document.querySelector('.feedback-form');
 
-CheckLocalStoradge(); 
-formEl.addEventListener('input', throttle(onFormChangeText, 500));
-formEl.addEventListener('submit', onFormSubmit);
+form.addEventListener('input', throttle(onInputData, 500));
+form.addEventListener('submit', onFormSubmit);
 
-function onFormChangeText(event) {
-   
-    formData[event.target.name] = event.target.value;
-    localStorage.setItem('STORADGE_KEY', JSON.stringify(formData));
+let dataForm = JSON.parse(localStorage.getItem(LOCAL_KEY)) || {};
+const { email, message } = form.elements;
+reloadPage();
+
+function onInputData(evt) {
+  dataForm = { email: email.value, message: message.value };
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(dataForm));
 }
 
-function onFormSubmit(event) {
-    
-    event.preventDefault(); 
-    if (inputEl.value === '' || messageEl.value === '') {
-         alert('You must write all fields!!!!');
-       return
-    }
-    console.log(formData);
-    event.currentTarget.reset();
-    localStorage.removeItem('STORADGE_KEY');
+function reloadPage() {
+  if (dataForm) {
+    email.value = dataForm.email || '';
+    message.value = dataForm.message || '';
+  }
 }
 
-function CheckLocalStoradge() {
-    const savedText = JSON.parse(localStorage.getItem('STORADGE_KEY'));
-    if (savedText === null) {
-        return
-    };
+function onFormSubmit(evt) {
+  evt.preventDefault();
+  console.log({ email: email.value, message: message.value });
 
-    inputEl.value = savedText.email || '';
-    messageEl.value = savedText.message || '';
-    formData.email = savedText.email || '';
-    formData.message = savedText.message || '';
+  if (email.value === '' || message.value === '') {
+    return alert('Please fill in all the fields!');
+  }
+
+  localStorage.removeItem(LOCAL_KEY);
+  evt.currentTarget.reset();
+  dataForm = {};
 }
-    
